@@ -885,7 +885,7 @@ class PlotLoss(BasePerBatchPlotCallback):
         
         tensors = pl_module.data_indices.data.output.full
         if isinstance(pl_module.data_indices.data.output.full, torch.Tensor):
-            tensors = pl_module.data_indices.data.output.full.numpy()
+            tensors = pl_module.data_indices.data.output.full.detach().cpu().numpy()
         for rollout_step in range(rollout):
             y_hat = outputs[1][rollout_step]
             y_true = None
@@ -902,8 +902,8 @@ class PlotLoss(BasePerBatchPlotCallback):
                 LOGGER.exception("Debugging info for loss plot: pl_module.multi_step = %d,data_shape = %d", pl_module.multi_step, pl_module.data_indices.data.output.full.shape)
                 print(batch)
                 print(pl_module.multi_step)
-                print(pl_module.data_indices.data.output.full)
-                print(type(pl_module.data_indices.data.output.full))
+                print(pl_module.data_indices.data.output.full.numpy())
+                # print(type(pl_module.data_indices.data.output.full))
                 print(rollout_step)
                 raise
 
