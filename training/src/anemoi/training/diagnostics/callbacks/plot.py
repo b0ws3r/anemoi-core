@@ -884,7 +884,7 @@ class PlotLoss(BasePerBatchPlotCallback):
         rollout = getattr(pl_module, "rollout", 0)
         
         pl_module.data_indices.data.output.full
-        if isinstance(pl_module.data_indices.data.output.full, tuple):
+        if isinstance(pl_module.data_indices.data.output.full, torch.Tensor):
             pl_module.data_indices.data.output.full = pl_module.data_indices.data.output.full[0]
         for rollout_step in range(rollout):
             y_hat = outputs[1][rollout_step]
