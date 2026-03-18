@@ -902,7 +902,7 @@ class PlotLoss(BasePerBatchPlotCallback):
             except Exception as e:
                 LOGGER.exception("Debugging info for loss plot: pl_module.multi_step = %d,data_shape = %d", pl_module.multi_step, pl_module.data_indices.data.output.full.shape)
                 print(pl_module.multi_step)
-                print(pl_module.data_indices.data.output.full.shape)
+                print(pl_module.data_indices.data.output.full)
                 print(rollout_step)
                 raise
 
