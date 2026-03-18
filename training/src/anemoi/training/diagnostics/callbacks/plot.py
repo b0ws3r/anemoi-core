@@ -882,7 +882,12 @@ class PlotLoss(BasePerBatchPlotCallback):
             )
 
         rollout = getattr(pl_module, "rollout", 0)
-
+        
+        # debugging for issue with bad index select
+        # # TypeError: list indices must be integers or slices, not tuple
+        print(pl_module.multi_step)
+        print(pl_module.data_indices.data.output.full.shape)
+        
         for rollout_step in range(rollout):
             y_hat = outputs[1][rollout_step]
             y_true = batch[
