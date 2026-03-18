@@ -899,10 +899,12 @@ class PlotLoss(BasePerBatchPlotCallback):
                     pl_module.data_indices.data.output.full,
                 ]
                 loss = self.loss(y_hat, y_true, squash=False).detach().cpu().numpy()
-            except:
+            except Exception as e:
                 LOGGER.exception("Debugging info for loss plot: pl_module.multi_step = %d,data_shape = %d", pl_module.multi_step, pl_module.data_indices.data.output.full.shape)
                 print(pl_module.multi_step)
                 print(pl_module.data_indices.data.output.full.shape)
+                print(rollout_step)
+                raise
 
             sort_by_parameter_group, colors, xticks, legend_patches = self.sort_and_color_by_parameter_group
             loss = loss[argsort_indices]
