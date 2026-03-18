@@ -1084,7 +1084,7 @@ class BasePlotAdditionalMetrics(BasePerBatchPlotCallback):
                 :,
                 pl_module.multi_step - 1 : pl_module.multi_step + pl_module.rollout + 1,
                 ...,
-                pl_module.data_indices.data.output.full,
+                pl_module.data_indices.data.output.full.numpy(),
             ]
             .detach()
             .cpu()
