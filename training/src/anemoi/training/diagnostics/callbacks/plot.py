@@ -1020,13 +1020,13 @@ class PlotSample(BasePerBatchPlotCallback):
         if self.latlons is None:
             self.latlons = np.rad2deg(pl_module.latlons_data.clone().detach().cpu().numpy())
         local_rank = pl_module.local_rank
-
+        tensor = pl_module.data_indices.data.output.full.numpy()
         input_tensor = (
             batch[
                 :,
                 pl_module.multi_step - 1 : pl_module.multi_step + pl_module.rollout + 1,
                 ...,
-                pl_module.data_indices.data.output.full,
+                tensor,
             ]
             .detach()
             .cpu()
@@ -1078,17 +1078,23 @@ class BasePlotAdditionalMetrics(BasePerBatchPlotCallback):
     ) -> tuple[np.ndarray, np.ndarray]:
         if self.latlons is None:
             self.latlons = np.rad2deg(pl_module.latlons_data.clone().detach().cpu().numpy())
-
-        input_tensor = (
-            batch[
-                :,
-                pl_module.multi_step - 1 : pl_module.multi_step + pl_module.rollout + 1,
-                ...,
-                pl_module.data_indices.data.output.full.numpy(),
-            ]
-            .detach()
-            .cpu()
-        )
+        tensor = pl_module.data_indices.data.output.full.numpy()
+        input_tensor = None
+        try:
+            input_tensor = (
+                batch[
+                    :,
+                    pl_module.multi_step - 1 : pl_module.multi_step + pl_module.rollout + 1,
+                    ...,
+                    tensor,
+                ]
+                .detach()
+                .cpu()
+            )
+        except Exception as e:
+            print(pl_module.multi_step)
+            print(pl_module.data_indices.data.output.full)
+            print(tensor)
         data = self.post_processors(input_tensor)[self.sample_idx]
         output_tensor = torch.cat(
             tuple(
