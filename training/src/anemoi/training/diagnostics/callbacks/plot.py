@@ -885,17 +885,24 @@ class PlotLoss(BasePerBatchPlotCallback):
         
         # debugging for issue with bad index select
         # # TypeError: list indices must be integers or slices, not tuple
-        LOGGER.info("Debugging info for loss plot: pl_module.multi_step = %d,data_shape = %d", pl_module.multi_step, pl_module.data_indices.data.output.full.shape)
+        
         
         for rollout_step in range(rollout):
             y_hat = outputs[1][rollout_step]
-            y_true = batch[
-                :,
-                pl_module.multi_step + rollout_step,
-                ...,
-                pl_module.data_indices.data.output.full,
-            ]
-            loss = self.loss(y_hat, y_true, squash=False).detach().cpu().numpy()
+            y_true = None
+            loss= None
+            try:
+                y_true = batch[
+                    :,
+                    pl_module.multi_step + rollout_step,
+                    ...,
+                    pl_module.data_indices.data.output.full,
+                ]
+                loss = self.loss(y_hat, y_true, squash=False).detach().cpu().numpy()
+            except:
+                LOGGER.exception("Debugging info for loss plot: pl_module.multi_step = %d,data_shape = %d", pl_module.multi_step, pl_module.data_indices.data.output.full.shape)
+                print(pl_module.multi_step)
+                print(pl_module.data_indices.data.output.full.shape)
 
             sort_by_parameter_group, colors, xticks, legend_patches = self.sort_and_color_by_parameter_group
             loss = loss[argsort_indices]
